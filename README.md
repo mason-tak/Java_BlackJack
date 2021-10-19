@@ -113,7 +113,9 @@ public class CardDeck {
         else if (number == 11) return "J";
         else if (number == 12) return "Q";
         else if (number == 13) return "K";
-        return String.valueOf(number);
+        return String.valueOf(number);  
+        // String.valueOf()를 사용한 이유 : 파라미터가 null일 경우 null을 반환한다.
+        // toString()을 사용할 경우 NullPointerException 에러가 발생한다.
     }
 }
 ```
@@ -123,3 +125,39 @@ public class CardDeck {
 그렇게 한다면 denomination(끗수)와 pattern(무늬)를 Card 클래스에서 마음대로 활용한다 해도 CardDeck 클래스에서는 아무런 영향이 없기 때문이다.
 
 그리고 Card 클래스를 호출할때 끗수와 무늬는 필수임을 알 수 있게 해준다. (둘 중에 하나라도 없다면 생성 될 수 없다.)
+
+`gitbranch - feature/carddeck_implement`
+
+카드를 생성했다면 카드를 뽑는 로직과 뽑은 카드를 삭제하는 로직을 구성해야한다.
+
+```java
+// CardDeck class 아래 메서드를 추가 한다.
+
+public Card draw() {
+    int size = cards.size();
+    int selelct = (int)(Math.random()*size());
+    Card selectedCard = cards.get(select);
+    cards.remove(select);
+    return selectedCard;
+}
+```
+
+일단 문제점은 하나의 메서드에서 두가지 작업을 한다는 점이다.
+
+카드 뽑기 & 뽑은 카드를 제거
+
+여기서 카드 뽑기는 private으로 설정해서 해당 클래스이외에는 접근할 수 없게 작성한다. (이유 : 다른 클래스에서도 카드를 뽑을 수 있게 되면 CardDeck이라는 기능이 필요 없어지기 때문에)
+
+```java
+public Card draw() {
+    Card selectedCard = getRandomCard(); 
+    cards.remove(select);  // 뽑은 카드 삭제
+    return selectedCard;
+}
+
+public Card getRandomCard() {
+    int size = cards.size();
+    int select = (int)(Math.random()*size);
+    return cards.get(select);
+}
+```

@@ -35,6 +35,20 @@ public class CardDeck {
         return String.valueOf(number);
     }
 
+    public Card draw() {
+        // 카드 제거
+        Card selectedCard = getRandomCard();
+        cards.remove(selectedCard);  // 뽑은 카드 제거
+        return selectedCard;
+    }
+
+    private Card getRandomCard() {
+        // 카드 뽑기
+        int size = cards.size();
+        int select = (int) (Math.random() * size);
+        return cards.get(select);
+    }
+
     public Card getCard() {
         return null;
     }
