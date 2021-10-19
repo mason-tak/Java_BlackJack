@@ -113,7 +113,7 @@ public class CardDeck {
         else if (number == 11) return "J";
         else if (number == 12) return "Q";
         else if (number == 13) return "K";
-        return String.valueOf(number);  
+        return String.valueOf(number);
         // String.valueOf()를 사용한 이유 : 파라미터가 null일 경우 null을 반환한다.
         // toString()을 사용할 경우 NullPointerException 에러가 발생한다.
     }
@@ -133,13 +133,13 @@ public class CardDeck {
 ```java
 // CardDeck class 아래 메서드를 추가 한다.
 
-public Card draw() {
-    int size = cards.size();
-    int selelct = (int)(Math.random()*size());
-    Card selectedCard = cards.get(select);
-    cards.remove(select);
-    return selectedCard;
-}
+public Card draw(){
+        int size=cards.size();
+        int selelct=(int)(Math.random()*size());
+        Card selectedCard=cards.get(select);
+        cards.remove(select);
+        return selectedCard;
+        }
 ```
 
 일단 문제점은 하나의 메서드에서 두가지 작업을 한다는 점이다.
@@ -149,15 +149,107 @@ public Card draw() {
 여기서 카드 뽑기는 private으로 설정해서 해당 클래스이외에는 접근할 수 없게 작성한다. (이유 : 다른 클래스에서도 카드를 뽑을 수 있게 되면 CardDeck이라는 기능이 필요 없어지기 때문에)
 
 ```java
-public Card draw() {
-    Card selectedCard = getRandomCard(); 
-    cards.remove(select);  // 뽑은 카드 삭제
-    return selectedCard;
-}
+public Card draw(){
+        Card selectedCard=getRandomCard();
+        cards.remove(select);  // 뽑은 카드 삭제
+        return selectedCard;
+        }
 
-public Card getRandomCard() {
-    int size = cards.size();
-    int select = (int)(Math.random()*size);
-    return cards.get(select);
+public Card getRandomCard(){
+        int size=cards.size();
+        int select=(int)(Math.random()*size);
+        return cards.get(select);
+        }
+```
+
+## Gamer 구현하기
+
+**Gamer의 역할**
+
+- 추가로 카드를 받는다.
+- 뽑은 카드를 소유한다.
+- 카드를 오픈한다.
+
+receiveCard라는 메서드를 생성해 뽑은 카드를 소유할 수 있도록 해준다.
+
+카드를 저장할 요소는 ArrayList이다.
+
+그리고 게이머는 현재 본인의 카드의 총 점수가 몇점인지 알아야한다.
+
+그래야 카드를 더 뽑을지 안뽑을지 결정할 수 있기 때문이다.
+
+소유 카드의 목록을 확인하는 메서드(showCards)를 생성한다.
+
+그리고 뽑은 카드를 소유할때 확인도 가능해야하니 receiveCard()에서 showCards() 메서드를 호출해주자
+
+```java
+public class Gamer {
+    private List<Card> cards;
+    int numberGames = 0;
+
+    public Gamer() {
+        cards = new ArrayList<>();  // 뽑은 카드를 담을 곳
+    }
+
+    public void receiveCard(Card card) {
+        // 뽑은 카드 소유
+        this.cards.add(card);
+        // 카드를 받을때 현재 소유한 카드를 확인해야함
+        this.showCards();
+    }
+
+    public void showCards() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("현재 보유 카드 목록 \n");
+
+        for (Card card : cards) {
+            sb.append(card.toString());
+            sb.append("\n");
+        }
+
+        System.out.println(sb.toString());
+    }
+
+    public List<Card> openCards() {
+        // 카드 오픈
+        // 현재 가지고 있는 모든 카드들을 전달하는 역할
+        return this.cards;
+    }
 }
 ```
+
+그럼 Game class에서 카드를 뽑는 메서드를 생성해야한다.
+
+해당 메서드의 내용은 CardDeck을 통해 카드를 뽑고 Gamer가 그 카드를 받고 현재 카드를 확인하는 내용의 로직을 작성해준다. (playingPhase())
+
+그리고 initPhase() 메서드는 처음 게임을 시작할때 딜러와 게이머가 각 2장씩 받는 기능을 할 메서드이다.
+
+마찬가지로 카드를 뽑고 확인 하는 메서드를 호출해준다.
+
+```java
+public class Game {
+    ...
+    private void playingPhase(Scanner sc, CardDeck cardDeck, Gamer gamer) {
+        String gamerInput;
+        while (true) {
+            System.out.println("카드를 뽑겠습니까? 종료를 원하시면 0을 입력하세요.");
+            gamerInput = sc.nextLine();
+
+            if ("0".equals(gamerInput)) break;
+
+            Card card = cardDeck.draw();  // 카드 뽑기
+            gamer.receiveCard(card);  // 게이머가 카드 받고 확인
+        }
+    }
+
+    private void initPhase(CardDeck cardDeck, Gamer gamer) {
+        // 처음 시작할때 게이머가 2장의 카드를 받는 메서드
+        System.out.println("처음 2장의 카드를 각자 뽑겠습니다.");
+        for (int i = 0; i < INIT_RECEIVE_CARD_COUNT; i++) {
+            Card card = cardDeck.draw();
+            gamer.receiveCard(card);
+        }
+    }
+}
+```
+
