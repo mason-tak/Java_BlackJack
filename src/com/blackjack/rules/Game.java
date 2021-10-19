@@ -13,6 +13,7 @@ public class Game {
         Rule rule = new Rule();
         CardDeck cardDeck = new CardDeck();
 
-        System.out.println(cardDeck.toString());
+//        System.out.println(cardDeck.toString());
+        System.out.println(cardDeck.draw());
     }
 }
