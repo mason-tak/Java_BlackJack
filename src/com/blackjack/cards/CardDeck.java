@@ -18,12 +18,18 @@ public class CardDeck {
 
         for (String pattern : PATTERNS) {
             for (int i = 1; i <= CARD_COUNT; i++) {
-                String denomination = this.numberToDenomination(i);
-                Card card = new Card(pattern, denomination); // 카드는 끗수와 무늬가 필수임을 강제할 수 있다.
+                Card card = new Card(pattern, i); // 카드는 끗수와 무늬가 필수임을 강제할 수 있다.
                 cards.add(card);
             }
         }
         return cards;
+    }
+
+    private int numberToPoint(int number) {
+        if (number >= 11) {
+            return 10;
+        }
+        return number;
     }
 
     private String numberToDenomination(int number) {

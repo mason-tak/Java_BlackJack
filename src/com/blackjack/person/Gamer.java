@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 // 게이머
-public class Gamer {
+public class Gamer implements Player {
     private List<Card> cards;
     int numberGames = 0;
 
@@ -21,6 +21,12 @@ public class Gamer {
         this.showCards();
     }
 
+    @Override
+    public void receiverCard(Card card) {
+
+    }
+
+    @Override
     public void showCards() {
         StringBuilder sb = new StringBuilder();
         sb.append("현재 보유 카드 목록 \n");
@@ -34,6 +40,7 @@ public class Gamer {
         numberGames++;
     }
 
+    @Override
     public List<Card> openCards() {
         // 카드 오픈
         // 현재 가지고 있는 모든 카드들을 전달하는 역할
